@@ -14,7 +14,7 @@
 # the License.
 
 """
-Napalm driver for Skeleton.
+Napalm driver for Adva.
 
 Read https://napalm.readthedocs.io for more information.
 """
@@ -29,8 +29,8 @@ from napalm.base.exceptions import (
 )
 
 
-class SkeletonDriver(NetworkDriver):
-    """Napalm driver for Skeleton."""
+class AdvaDriver(NetworkDriver):
+    """Napalm driver for Adva."""
 
     def __init__(self, hostname, username, password, timeout=60, optional_args=None):
         """Constructor."""

@@ -29,7 +29,7 @@ class TestConfigAdvaDriver(unittest.TestCase, TestConfigNetworkDriver):
         hostname = '127.0.0.1'
         username = 'vagrant'
         password = 'vagrant'
-        cls.vendor = 'adva'
+        cls.vendor = 'Adva'
 
         optional_args = {'port': 12443, }
         cls.device = adva.AdvaDriver(hostname, username, password, timeout=60,

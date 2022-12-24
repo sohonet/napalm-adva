@@ -36,6 +36,10 @@ class PatchedAdvaDriver(adva.AdvaDriver):
 
         self.patched_attrs = ['device']
         self.device = FakeAdvaDevice()
+        self.platform = "generic"
+
+    def is_alive(self):
+        return {"is_alive": True}  # In testing everything works..
 
 
 class FakeAdvaDevice(BaseTestDouble):

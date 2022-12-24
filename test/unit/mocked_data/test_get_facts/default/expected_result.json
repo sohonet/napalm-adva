@@ -1,0 +1,17 @@
+{
+  "hostname": "AD-FSP150GE104-C-1-LDP00-GB",
+  "fqdn": "false",
+  "interface_list" : [
+      "network-1-1-1-1",
+      "network-1-1-1-2",
+      "access-1-1-1-3 ",
+      "access-1-1-1-4 ",
+      "access-1-1-1-5 ",
+      "access-1-1-1-6 ",
+    ],
+  "model" : "FSP 150-GE104(E)",
+  "os_version": "13.7.1-84",
+  "serial_number" : "",
+  "uptime": 440674,
+  "vendor" : "Adva"
+}

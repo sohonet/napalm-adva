@@ -1,0 +1,8 @@
+|Port Eid            |Admin State|Operational State|MAC Address      |Service Type |Config Speed
+|---------------------|----------------|-----------------------|------------------------|------------------|--------------|
+|network-1-1-1-1|in-service    |normal                |84:c8:07:3f:d7:31 |Not Available|auto
+|network-1-1-1-2|unassigned |outage                |84:c8:07:3f:d7:32 |Not Available|auto
+|access-1-1-1-3 |in-service    |normal                |84:c8:07:3f:d7:33 |epl                 |auto
+|access-1-1-1-4 |unassigned |outage                |84:c8:07:3f:d7:34 |epl                 |auto
+|access-1-1-1-5 |unassigned |outage                |84:c8:07:3f:d7:35 |epl                 |auto
+|access-1-1-1-6 |unassigned |outage                |84:c8:07:3f:d7:36 |epl                 |auto

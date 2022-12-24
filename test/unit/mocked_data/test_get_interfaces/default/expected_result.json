@@ -1,0 +1,56 @@
+{
+  "network-1-1-1-1": {
+    "is_up": true,
+    "is_enabled": true,
+    "description": "TO-POP--AR-716048YC6-I-1-LDP00-GB:e37",
+    "speed": 1000,
+    "mtu": 9638,
+    "last_flapped": -1,
+    "mac_address": "84:c8:07:3f:d7:31"
+  },
+  "network-1-1-1-2": {
+    "is_up": false,
+    "is_enabled": false,
+    "description": "",
+    "speed": 0,
+    "mtu": 0,
+    "last_flapped": -1,
+    "mac_address": "84:c8:07:3f:d7:32"
+  },
+  "access-1-1-1-3": {
+    "is_up": true,
+    "is_enabled": true,
+    "description": "",
+    "speed": 1000,
+    "mtu": 9638,
+    "last_flapped": -1,
+    "mac_address": "84:c8:07:3f:d7:33"
+  },
+  "access-1-1-1-4": {
+    "is_up": false,
+    "is_enabled": false,
+    "description": "",
+    "speed": 0,
+    "mtu": 0,
+    "last_flapped": -1,
+    "mac_address": "84:c8:07:3f:d7:34"
+  },
+  "access-1-1-1-5": {
+    "is_up": false,
+    "is_enabled": false,
+    "description": "",
+    "speed": 0,
+    "mtu": 0,
+    "last_flapped": -1,
+    "mac_address": "84:c8:07:3f:d7:35"
+  },
+  "access-1-1-1-6": {
+    "is_up": false,
+    "is_enabled": false,
+    "description": "",
+    "speed": 0,
+    "mtu": 0,
+    "last_flapped": -1,
+    "mac_address": "84:c8:07:3f:d7:36"
+  }
+}

@@ -51,3 +51,35 @@ class AdvaDriver(NetworkDriver):
     def close(self):
         """Implement the NAPALM method close (mandatory)"""
         pass
+
+
+    def is_alive(self):
+        return {}
+
+
+    def get_facts(self):
+        return {}
+
+
+    def get_interfaces(self):
+        return {}
+
+
+    def get_interfaces_ip(self):
+        return {}
+
+
+    def get_interfaces_vlans(self):
+        pass
+
+
+    def get_vlans(self):
+        return {}
+
+
+    def get_lldp_neighbors(self):
+        return {}
+
+
+    def get_static_routes(self):
+        pass

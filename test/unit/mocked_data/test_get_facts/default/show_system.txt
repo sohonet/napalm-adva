@@ -1,0 +1,54 @@
+System Name : AD-FSP150GE104-C-1-LDP00-GB
+System Location :
+System Contact :
+System Description : FSP 150-GE104(E)
+CLI Prefix : AD-FSP150GE104-C-1-LDP00-GB
+Proxy ARP : disabled
+IPv6 Forwarding : disabled
+Proxy NDP : disabled
+Management Traffic Bridging : disabled
+Management Traffic DSCP Control : disabled
+Management Traffic DSCP Value : 0
+IPv4 System Default Gateway : 10.32.31.1
+Release Version : 13.7.1-84
+SNMP Engine ID : 800009f00384c8073fd730
+SNMP Auth Traps : disabled
+NTP Mode : ntp-client
+CLI Security prompt : disabled
+Serial Port : enabled
+Auto log off upon serial port disconnect : enabled
+Telnet : disabled
+SSH : enabled
+HTTP : disabled
+HTTP Redirect Control : disabled
+HTTPS : enabled
+FTP : disabled
+SFTP : enabled
+TFTP : disabled
+SCP : disabled
+NETCONF over SSH : enabled
+Validation Timer Expiration : Not Applicable
+Activation Time : Not Applicable
+Local Time : 2022-12-12,14:57:01
+System Up Time : 5 days 2 hrs 24 mins 34 secs
+File services status : success
+File services percent complete : 0
+File services mode : IDLE
+System TOD type : ntp
+Source TOD Clock : none
+UTC Leap Offset : disabled
+Long Interface Alias : disabled
+Log Server Method : user-defined
+NTP Server Method : user-defined
+Simple LTP Control : disabled
+Simple LTP File Transfer Protocol : scp
+Simple LTP Server IPv4 Address : 0.0.0.0
+Simple LTP Username :
+Simple LTP Configfile Name :
+Simple LTP Software File Name :
+System Log Format : rfc3164
+System Log Facility Code : 1
+System Log Protocol : udp
+Call Home Client IP : 0.0.0.0
+Call Home State : not-started
+Accept DHCP Boot File : enabled

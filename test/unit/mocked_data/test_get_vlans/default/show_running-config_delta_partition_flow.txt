@@ -8,7 +8,8 @@ network-element ne-1
   configure nte nte104_e-1-1-1
     configure access-port access-1-1-1-3
       configure flow flow-1-1-1-3-1
-        ctag push 2101-0 n2a-prio-mapping-profile none a2n-prio-mapping-profile none
+        access-interface access-1-1-1-3 network-interface network-1-1-1-2 push 2101-0 none n2a-prio-mapping-profile none a2n-prio-mapping-profile none
+        circuit-name "TESTING"
 
 #
 #CLI:FLOW-1-1-1-4-1  Edit
@@ -18,7 +19,7 @@ network-element ne-1
   configure nte nte104_e-1-1-1
     configure access-port access-1-1-1-4
       configure flow flow-1-1-1-4-1
-        ctag push 1234-0 n2a-prio-mapping-profile none a2n-prio-mapping-profile none
-        circuit-name "CHELSEA-TEST"
+        ctag push 2222-0 n2a-prio-mapping-profile none a2n-prio-mapping-profile none
+        circuit-name "GE104RFCTEST"
 
 #end

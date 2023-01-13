@@ -62,7 +62,7 @@ class AdvaDriver(NetworkDriver):
                 verbose=False,
             )
             self.device.session_preparation()
-            self.device.send_command("", expect_string=f"{self.hostname}-->")
+            self.device.send_command("", expect_string=f"{self.hostname.split('.')[0]}-->")
 
         except Exception:
             raise ConnectionException("Cannot connect to switch: %s:%s" % (self.hostname, self.port))
@@ -82,9 +82,9 @@ class AdvaDriver(NetworkDriver):
         show_system = self.device.send_command("show system")
         system_info = textfsm_extractor(self, "show_system", show_system)[0]
 
-        self.device.send_command("network-element ne-1", expect_string=f"{self.hostname}-NE-1-->")
+        self.device.send_command("network-element ne-1", expect_string=f"{self.hostname.split('.')[0]}-NE-1-->")
         show_shelf_info = self.device.send_command("show shelf-info")
-        self.device.send_command("home", expect_string=f"{self.hostname}-->")
+        self.device.send_command("home", expect_string=f"{self.hostname.split('.')[0]}-->")
         serial_number = textfsm_extractor(self, "show_shelf_info", show_shelf_info)[0]
 
         show_ports = self.device.send_command_timing("show ports")

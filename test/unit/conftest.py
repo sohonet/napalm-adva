@@ -41,21 +41,39 @@ class PatchedAdvaDriver(adva.AdvaDriver):
     def is_alive(self):
         return {"is_alive": True}  # In testing everything works..
 
+    def disconnect(self):
+        pass
+
+    def open(self):
+        pass
+
 
 class FakeAdvaDevice(BaseTestDouble):
     """Adva device test double."""
 
-    def run_commands(self, command_list, encoding='json'):
-        """Fake run_commands."""
-        result = list()
+    # def run_commands(self, command_list, encoding='json'):
+    #     """Fake run_commands."""
+    #     result = list()
 
-        for command in command_list:
-            filename = '{}.{}'.format(self.sanitize_text(command), encoding)
-            full_path = self.find_file(filename)
+    #     for command in command_list:
+    #         filename = '{}.{}'.format(self.sanitize_text(command), encoding)
+    #         full_path = self.find_file(filename)
 
-            if encoding == 'json':
-                result.append(self.read_json_file(full_path))
-            else:
-                result.append({'output': self.read_txt_file(full_path)})
+    #         if encoding == 'json':
+    #             result.append(self.read_json_file(full_path))
+    #         else:
+    #             result.append({'output': self.read_txt_file(full_path)})
 
-        return result
+    #     return result
+
+    def send_command(self, command, **kwargs):
+        filename = "{}.txt".format(self.sanitize_text(command))
+        full_path = self.find_file(filename)
+        result = self.read_txt_file(full_path)
+        return str(result)
+
+    def send_command_timing(self, command, **kwargs):
+        return self.send_command(command, **kwargs)
+
+    def disconnect(self):
+        pass

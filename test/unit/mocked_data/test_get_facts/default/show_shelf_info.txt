@@ -1,0 +1,10 @@
+            Shelf Name : GE104(E)
+           Admin State : in-service
+     Operational State : normal
+      Secondary States : none
+             CLEI Code : Pending
+           Part Number : 1078904905-01
+    Backplane Revision : 1.01
+         Backplane USI : LBADVA71221303866
+    Backplane Mfg Date : 2022-03-30
+    Backplane Mfg Site : Shenzhen

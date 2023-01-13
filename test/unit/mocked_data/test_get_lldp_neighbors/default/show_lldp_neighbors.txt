@@ -1,9 +1,19 @@
-{
-  "network-1-1-1-1":
-    [
-        {
-        "hostname": "UNKNOWN",
-        "port": "1",
-        }
-    ]
-}
+               Local Port Eid : network-1-1-1-1
+                          Eid : lldp_net_rem_entry-1-1-1-1-1-1
+               Neighbour Type : nearest-bridge
+              Destination MAC : 01:80:c2:00:00:0e
+                    Remote ID : 1
+           Chassis ID Subtype : mac-address
+                   Chassis ID : 28:99:3a:de:93:d6
+              Port ID Subtype : interface-name
+                      Port ID : Ethernet39
+             Port Description : AD-FSP150GE104-C-2-LDP00-GB:network-1-1-1-1
+                  System Name : AR-716048YC6-I-1-LDP00-GB
+           System Description :
+System Capabilities Supported : none
+  System Capabilities Enabled : none
+               Remote Changes : false
+           Too Many Neighbors : false
+                 Time To Live : 120
+                   Time Stamp : 54 Days 02:27:17
+===========================================================

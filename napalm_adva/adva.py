@@ -63,7 +63,7 @@ class AdvaDriver(NetworkDriver):
                 session_log="/Users/chelsea.auld/git/napalm-adva/netmiko_session.log"
             )
             self.device.session_preparation()
-            self.device.send_command("")
+            self.device.send_command("", expect_string=f"{self.hostname}-->")
 
         except Exception:
             raise ConnectionException("Cannot connect to switch: %s:%s" % (self.hostname, self.port))
@@ -73,7 +73,11 @@ class AdvaDriver(NetworkDriver):
         self.device.disconnect()
 
     def is_alive(self):
-        return {}
+        try:
+            self.device.send_command("")
+            return {"is_alive": True}
+        except AttributeError:
+            return {"is_alive": False}
 
     def get_facts(self):
         show_system = self.device.send_command("show system")
@@ -84,7 +88,7 @@ class AdvaDriver(NetworkDriver):
         self.device.send_command("home", expect_string=f"{self.hostname}-->")
         serial_number = textfsm_extractor(self, "show_shelf_info", show_shelf_info)[0]
 
-        show_ports = self.device.send_command("show ports")
+        show_ports = self.device.send_command_timing("show ports")
         interfaces = textfsm_extractor(self, "show_ports", show_ports)
         interface_list = [p['port'] for p in interfaces]
 
@@ -100,7 +104,7 @@ class AdvaDriver(NetworkDriver):
 
         return {
             "hostname": system_info["hostname"],
-            "fqdn": None,
+            "fqdn": hostname if "." in hostname else "false",
             "vendor": "Adva",
             "model": system_info["model"],
             "serial_number": serial_number["serial"],
@@ -119,8 +123,8 @@ class AdvaDriver(NetworkDriver):
 
     def get_interfaces(self):
         show_ports = self.device.send_command("show ports")
-        interfaces = textfsm_extractor(self, "show_ports", show_ports)
-        interface_list = [p['port'] for p in interfaces]
+        ports = textfsm_extractor(self, "show_ports", show_ports)
+        interface_list = [p['port'] for p in ports]
 
         result = {}
         for i in interface_list:
@@ -147,14 +151,43 @@ class AdvaDriver(NetworkDriver):
         return {}
 
     def get_interfaces_vlans(self):
-        pass
+        show_ports = self.device.send_command("show ports")
+        ports = textfsm_extractor(self, "show_ports", show_ports)
+        interface_list = [p['port'] for p in ports]
+
+        result = {}
+        for i in interface_list:
+            if "network" in i:
+                mode = "trunk"
+            else:
+                mode = "access"
+
+            result[i] = {
+                "mode": mode,
+                "access-vlan": -1,
+                "trunk-vlans": [],
+                "native-vlan": -1,
+                "tagged-native-vlan": False,
+            }
+
+        show_flows = self.device.send_command("show running-config delta partition flow")
+        flows = textfsm_extractor(self, "show_run_flow", show_flows)
+        for flow in flows:
+            show_flow = self.device.send_command(f"show flow {flow['flowname']}")
+            flow_data = textfsm_extractor(self, "show_flow", show_flow)[0]
+            if flow_data["adminstate"] == "in-service":
+                result[flow_data["accessinterface"]]["access-vlan"] = flow_data["vlan"]
+                result[flow_data["networkinterface"]]["trunk-vlans"].append(flow_data["vlan"])
+
+        return result
 
     def get_vlans(self):
 
-        flows = ["flow-1-1-1-3-1", "flow-1-1-1-4-1", "flow-1-1-1-5-1", "flow-1-1-1-6-1"]
+        show_flows = self.device.send_command("show running-config delta partition flow")
+        flows = textfsm_extractor(self, "show_run_flow", show_flows)
         result = {}
         for flow in flows:
-            show_flow = self.device.send_command(f"show flow {flow}")
+            show_flow = self.device.send_command(f"show flow {flow['flowname']}")
             flow_data = textfsm_extractor(self, "show_flow", show_flow)[0]
             if flow_data["adminstate"] == "in-service":
                 result[flow_data["vlan"]] = {

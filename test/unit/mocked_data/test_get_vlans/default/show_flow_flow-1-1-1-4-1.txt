@@ -1,0 +1,51 @@
+                                     Admin State : in-service
+                               Operational State : outage
+                                Secondary States : act,sgeo
+                                    Circuit Name : GE104RFCTEST
+                                       Flow Type : port-based
+                               Multi-COS Enabled : disabled
+                  Access to Network Shaping Type : flow-based
+                     Access to Network CIR (bps) : 0
+                     Access to Network EIR (bps) : 1024000
+                 Network to Access Rate Limiting : disabled
+                     Network to Access CIR (bps) : 0
+                     Network to Access EIR (bps) : 1024000
+                               VLAN Members List :
+                           Class Of Service(COS) : 0
+                  Network to Access CoS Priority : outer-vlantag
+                                N2A Shaping Type : port-based
+                Independent A2N Shaper Bandwidth : disabled
+                                  N2N Forwarding : disabled
+                      Outer Tag Priority Control : disabled
+                      Inner Tag Priority Control : disabled
+                  N2A Outer Tag Priority Control : disabled
+                                Untagged Enabled : disabled
+                                   C-Tag Control : push
+                                           C-Tag : 2222-0
+                                   S-Tag Control : none
+                                           S-Tag : 4-0
+                       Preserve S-Tag Properties : disabled
+        SES Frame Loss Threshold Ratio (percent) : 30
+                                        Policing : enabled
+                                Policing Control : a2n-n2a
+                    A2N Priority Mapping Profile : none
+                    N2A Priority Mapping Profile : none
+                               Network Interface : network-1-1-1-1
+                                Access Interface : access-1-1-1-4
+               Access Interface Learning Control : none
+              Network Interface Learning Control : none
+                Access Maximum Fwd Table Entries : 4096
+               Network Maximum Fwd Table Entries : 4096
+                 Protect Access Learning Control : none
+                Protect Network Learning Control : none
+                               Aging Timer (Sec) : 300
+                      Table Full Learning Action : forward
+                A2N Multicast Rate Limit Control : disabled
+                  A2N Multicast Rate Limit (bps) : 64000
+                A2N Broadcast Rate Limit Control : disabled
+                  A2N Broadcast Rate Limit (bps) : 64000
+                 A2N Combined Rate Limit Control : disabled
+                   A2N Combined Rate Limit (bps) : 64000
+                            WFQ Segmentation CoS : 0
+                                   WFQ Group CoS : 0
+                                   WFQ Group EIR : 0

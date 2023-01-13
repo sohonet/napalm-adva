@@ -1,0 +1,101 @@
+                                     Admin State : unassigned
+                               Operational State : outage
+                                Secondary States : uas
+                                           Alias :
+                                     MAC Address : 84:c8:07:3f:d7:35
+                                     MTU (bytes) : 9600
+                            Max Port Speed (bps) : 0
+                           Configured Port Speed : auto
+                                  Max Port Speed : 0
+                           Negotiated Port Speed : none
+                                      Media Type : copper
+                                    MDIX Control : auto
+                                     MDIX Status : Not Applicable
+                                        SFP Name : Not Available
+                                 SFP Vendor Name : Not Available
+                                 SFP Part Number : Not Available
+                               SFP Serial Number : Not Available
+                           SFP Hardware Revision : Not Available
+                                    SFP Mfg Date : Not Available
+                              SFP Connector Type : Not Available
+                             SFP Link Length (m) : Not Available
+                                  SFP Media Type : Not Available
+                      SFP Laser Wave Length (nm) : Not Available
+                                        FEC Mode : off
+                                       Port Mode : co
+                                    Service Type : epl
+                                Rx Pause Enabled : disabled
+                                Tx Pause Enabled : disabled
+                         Acceptable Frame Policy : all-afp
+                                    Port VLAN ID : 5-0
+                                  QinQ Ethertype : N/A
+                         QinQ Ethertype Override : disabled
+                            Port Shaping Enabled : disabled
+                         Port Shaped Speed (bps) : 0
+                        Priority Mapping Profile : none
+               Independent Port Shaper Bandwidth : disabled
+                                        PCP Mode : none
+                                   Rx DEI Action : use
+                           Rx DEI Outer Tag Type : ctag-or-stag
+                                   Tx DEI Action : mark-color
+                           Tx DEI Outer Tag Type : stag
+                               N2A VLAN Trunking : enabled
+                               A2N Push Port VID : disabled
+                                N2A Pop Port VID : disabled
+                           Loopback outer VLAN 1 : 4094-0
+                   Loopback outer VLAN 1 Control : disabled
+                           Loopback outer VLAN 2 : 4094-1
+                   Loopback outer VLAN 2 Control : disabled
+                           Loopback outer VLAN 3 : 4094-2
+                   Loopback outer VLAN 3 Control : disabled
+                           Loopback inner VLAN 1 : 4094-0
+                   Loopback inner VLAN 1 Control : disabled
+                           Loopback inner VLAN 2 : 4094-1
+                   Loopback inner VLAN 2 Control : disabled
+                           Loopback inner VLAN 3 : 4094-2
+                   Loopback inner VLAN 3 Control : disabled
+                                   Loopback Type : none
+                                 Loopback Status : none
+                            Loopback Timer (Sec) : 10
+                                       Swap SADA : none
+           JDSU Loopback Control Frames Snooping : disabled
+                              JDSU Loopback Vlan : Not Available
+                               Loopback Blocking : enabled
+                              Source MAC Control : disabled
+                                      Source MAC : 00:00:00:00:00:00
+                         Destination MAC Control : disabled
+                                 Destination MAC : 00:00:00:00:00:00
+                                      LLF Status : disabled
+                              LLF Trigger Events : none
+                                 LLF Delay (Sec) : 0
+                                      LLF Active : false
+                         LLF Link Partner Status : disabled
+                               LLF Local Link Id : 5
+                             LLF Remote Link Ids : none
+                              LLF TX Action Type : no-action
+                        LLF Remote Link Down Ids : none
+                                  OAM Identifier : 132
+                                     OAM Control : disabled
+                                 OAM Admin State : enabled
+                             OAM Discovery State : Not Applicable
+                        OAM Lcl Var Rtrv Enabled : disabled
+                       OAM Lcl Link Evts Enabled : disabled
+                          OAM Lcl Lpbk Supported : enabled
+                           OAM Lcl Uni Supported : enabled
+                    OAM Lcl Max PDU Size (bytes) : 1400
+                                    OAM Lcl Mode : oam-active
+                                OAM Rmt MAC Addr : Not Available
+                        OAM Rmt Var Rtrv Enabled : Not Available
+                       OAM Rmt Link Evts Enabled : Not Available
+                          OAM Rmt Lpbk Supported : Not Available
+                           OAM Rmt Uni Supported : Not Available
+                    OAM Rmt Max PDU Size (bytes) : Not Available
+                                    OAM Rmt Mode : Not Available
+                                 Auto Diagnostic : enabled
+                          Diagnostic MAC Address : 84:c8:07:3f:d7:39
+                             Delay Asymmetry(ns) : 0
+                            Monitor Port Control : disabled
+                            Buffer Size (Kbytes) : 128
+                              Tail Dropped Count : 0
+                                    Silent Start : disabled
+                               Firmware Revision : Not Available

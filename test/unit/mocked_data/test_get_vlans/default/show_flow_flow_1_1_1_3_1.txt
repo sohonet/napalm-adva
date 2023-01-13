@@ -1,7 +1,7 @@
                                      Admin State : in-service
                                Operational State : normal
                                 Secondary States : act
-                                    Circuit Name : MP-A013X00003BPXKFQA3-GSR(UK)PRODUCTIONSLTD-BRAYFILMSTUDIOS-10GMULTIPORT-12MONTHS
+                                    Circuit Name : TESTING
                                        Flow Type : port-based
                                Multi-COS Enabled : disabled
                   Access to Network Shaping Type : flow-based

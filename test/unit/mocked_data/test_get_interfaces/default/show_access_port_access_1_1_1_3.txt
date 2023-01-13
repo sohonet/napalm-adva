@@ -1,15 +1,16 @@
                                      Admin State : in-service
                                Operational State : normal
                                 Secondary States : act
-                                           Alias : TBD
-                                     MAC Address : 84:c8:07:3f:df:81
-                                     MTU (bytes) : 9638
+                                           Alias :
+                                     MAC Address : 84:c8:07:3f:d7:33
+                                     MTU (bytes) : 9600
                             Max Port Speed (bps) : 1000000000
                            Configured Port Speed : auto
+                                  Max Port Speed : 1000000000
                            Negotiated Port Speed : auto-1000-full
                                       Media Type : copper
                                     MDIX Control : auto
-                                     MDIX Status : crossed
+                                     MDIX Status : uncrossed
                                         SFP Name : Not Available
                                  SFP Vendor Name : Not Available
                                  SFP Part Number : Not Available
@@ -21,17 +22,26 @@
                                   SFP Media Type : Not Available
                       SFP Laser Wave Length (nm) : Not Available
                                         FEC Mode : off
+                                       Port Mode : co
+                                    Service Type : epl
+                                Rx Pause Enabled : disabled
+                                Tx Pause Enabled : disabled
+                         Acceptable Frame Policy : all-afp
+                                    Port VLAN ID : 3-0
                                   QinQ Ethertype : N/A
                          QinQ Ethertype Override : disabled
                             Port Shaping Enabled : disabled
                          Port Shaped Speed (bps) : 0
-                        Priority Mapping Profile : prio_map_profile-1
+                        Priority Mapping Profile : none
                Independent Port Shaper Bandwidth : disabled
                                         PCP Mode : none
                                    Rx DEI Action : use
                            Rx DEI Outer Tag Type : ctag-or-stag
                                    Tx DEI Action : mark-color
                            Tx DEI Outer Tag Type : stag
+                               N2A VLAN Trunking : enabled
+                               A2N Push Port VID : disabled
+                                N2A Pop Port VID : disabled
                            Loopback outer VLAN 1 : 4094-0
                    Loopback outer VLAN 1 Control : disabled
                            Loopback outer VLAN 2 : 4094-1
@@ -60,11 +70,11 @@
                                  LLF Delay (Sec) : 0
                                       LLF Active : false
                          LLF Link Partner Status : disabled
-                               LLF Local Link Id : 1
+                               LLF Local Link Id : 3
                              LLF Remote Link Ids : none
                               LLF TX Action Type : no-action
                         LLF Remote Link Down Ids : none
-                                  OAM Identifier : 16
+                                  OAM Identifier : 130
                                      OAM Control : disabled
                                  OAM Admin State : enabled
                              OAM Discovery State : Not Applicable
@@ -82,10 +92,10 @@
                     OAM Rmt Max PDU Size (bytes) : Not Available
                                     OAM Rmt Mode : Not Available
                                  Auto Diagnostic : enabled
-                          Diagnostic MAC Address : 84:c8:07:3f:df:89
+                          Diagnostic MAC Address : 84:c8:07:3f:d7:39
                              Delay Asymmetry(ns) : 0
-                            WFQ Segmentation CoS : 0
-                                   WFQ Group CoS : 0
-                                   WFQ Group EIR : 0
+                            Monitor Port Control : disabled
+                            Buffer Size (Kbytes) : 128
+                              Tail Dropped Count : 0
                                     Silent Start : disabled
-                               Firmware Revision :
+                               Firmware Revision : Not Available

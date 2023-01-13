@@ -1,0 +1,2 @@
+AD-FSP150GE104-C-1-LDP00-GB--> network-element ne-1
+AD-FSP150GE104-C-1-LDP00-GB-NE-1-->

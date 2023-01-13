@@ -60,6 +60,7 @@ class AdvaDriver(NetworkDriver):
                 timeout=self.timeout,
                 conn_timeout=self.timeout,
                 verbose=False,
+                session_log="/Users/chelsea.auld/git/napalm-adva/netmiko_session.log"
             )
             self.device.session_preparation()
             self.device.send_command("", expect_string=f"{self.hostname}-->")
@@ -103,22 +104,22 @@ class AdvaDriver(NetworkDriver):
 
         return {
             "hostname": system_info["hostname"],
-            "fqdn": hostname if "." in hostname else "false",
+            "fqdn": system_info["hostname"] if "." in system_info["hostname"] else "false",
             "vendor": "Adva",
             "model": system_info["model"],
             "serial_number": serial_number["serial"],
             "interface_list": interface_list,
             "os_version": system_info["version"],
-            "uptime": uptime
+            "uptime": float(uptime)
         }
 
     def _get_port_speed(self, speed):
         """Convert port speed to Mbps (int) if there is one"""
 
         if speed == "negotiating" or speed == "none":
-            return -1
+            return -1.0
         else:
-            return speed.split("-")[1]
+            return float(speed.split("-")[1])
 
     def get_interfaces(self):
         show_ports = self.device.send_command("show ports")

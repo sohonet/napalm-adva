@@ -148,7 +148,16 @@ class AdvaDriver(NetworkDriver):
         return result
 
     def get_interfaces_ip(self):
-        return {}
+        show_run_mgmttnl = self.device.send_command("show running-config delta partition mgmttnl")
+        info = textfsm_extractor(self, "show_run_mgmttnl", show_run_mgmttnl)
+        result = {}
+        for i in info:
+            result[i["port"]] = {
+                "ipv4": {i["ipaddress"]: {
+                    "prefix_length": ipaddress.IPv4Network(f"{i['ipaddress']}/{i['subnet']}", strict=False).prefixlen}}
+            }
+
+        return result
 
     def get_interfaces_vlans(self):
         show_ports = self.device.send_command("show ports")

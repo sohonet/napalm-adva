@@ -60,7 +60,6 @@ class AdvaDriver(NetworkDriver):
                 timeout=self.timeout,
                 conn_timeout=self.timeout,
                 verbose=False,
-                session_log="/Users/chelsea.auld/git/napalm-adva/netmiko_session.log"
             )
             self.device.session_preparation()
             self.device.send_command("", expect_string=f"{self.hostname}-->")

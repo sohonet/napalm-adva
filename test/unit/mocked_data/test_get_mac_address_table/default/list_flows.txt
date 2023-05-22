@@ -1,0 +1,4 @@
+AD-FSP150XG108-C-1-LDP00-GB-NE-1:access-1-1-1-7--> list flows
+|EID              |A2N CIR (bps) |A2N EIR (bps) |Flow Type
+|-----------------|--------------|--------------|------------------|
+|flow-1-1-1-7-1   |832000        |0             |policed-and-shaped

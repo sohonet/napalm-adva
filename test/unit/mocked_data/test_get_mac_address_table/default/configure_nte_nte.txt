@@ -1,0 +1,2 @@
+AD-FSP150XG108-C-1-LDP00-GB-NE-1--> configure nte ntexg108-1-1-1
+AD-FSP150XG108-C-1-LDP00-GB-NE-1:ntexg108-1-1-1-->

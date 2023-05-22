@@ -232,3 +232,43 @@ class AdvaDriver(NetworkDriver):
             })
 
         return result
+
+    def get_mac_address_table(self):
+
+        self.device.send_command("network-element ne-1",
+                                 expect_string=f"{self.hostname.split('.')[0]}-NE-1-->")
+        self.device.send_command("configure nte nte",
+                                 expect_string=fr"{self.hostname.split('.')[0]}-NE-1:nte(.*)-1-1-1-->")
+
+        show_ports = self.device.send_command("show ports")
+        access_ports = textfsm_extractor(self, "show_ports_up_access", show_ports)
+
+        mac_address_table = []
+        for p in access_ports:
+            self.device.send_command(f"configure access-port {p['port']}",
+                                     expect_string=f"{self.hostname.split('.')[0]}-NE-1:{p['port']}")
+            show_flows = self.device.send_command("list flows")
+            flows = textfsm_extractor(self, "show_port_flows", show_flows)
+
+            for flow in flows:
+                self.device.send_command(f"configure flow {flow['flow']}",
+                                         expect_string=f"{self.hostname.split('.')[0]}-NE-1:{flow['flow']}")
+                list_fwd = self.device.send_command("list fwd-entries")
+                macs = textfsm_extractor(self, "list_fwd_entries", list_fwd)
+                self.device.send_command("back",
+                                         expect_string=f"{self.hostname.split('.')[0]}-NE-1:{p['port']}")
+
+                for mac in macs:
+                    mac_address_table.append({
+                        "mac": mac["mac"],
+                        "interface": mac["port"],
+                        "vlan": -1,
+                        "static": bool(mac["type"] == "static"),
+                        "active": bool(mac["status"] == "Valid"),
+                        "moves": -1,
+                        "last_move": -1.0
+                    })
+
+            self.device.send_command("back", expect_string=fr"{self.hostname.split('.')[0]}-NE-1:nte(.*)-1-1-1-->")
+
+        return mac_address_table

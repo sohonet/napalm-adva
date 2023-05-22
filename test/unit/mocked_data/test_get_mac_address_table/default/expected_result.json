@@ -1,0 +1,20 @@
+[
+  {
+    "mac": "bc:d7:a5:cf:30:40",
+    "interface": "network-1-1-1-1",
+    "vlan": -1,
+    "static": false,
+    "active": true,
+    "moves": -1,
+    "last_move": -1
+  },
+  {
+    "mac": "00:00:5e:00:01:0a",
+    "interface": "access-1-1-1-7",
+    "vlan": -1,
+    "static": false,
+    "active": true,
+    "moves": -1,
+    "last_move": -1
+  }
+]

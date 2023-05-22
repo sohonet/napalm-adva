@@ -1,0 +1,12 @@
+AD-FSP150XG108-C-1-LDP00-GB-NE-1:ntexg108-1-1-1--> show ports
+|Port Eid       |Admin State|Operational State|MAC Address      |Service Type |Config Speed
+|---------------|-----------|-----------------|-----------------|-------------|--------------|
+|network-1-1-1-1|in-service |normal           |84:c8:07:4e:2b:f1|Not Available|fixed-10g-full
+|network-1-1-1-2|unassigned |outage           |84:c8:07:4e:2b:f2|Not Available|fixed-10g-full
+|access-1-1-1-3 |unassigned |outage           |84:c8:07:4e:2b:f3|evpl         |auto-1000-full
+|access-1-1-1-4 |unassigned |outage           |84:c8:07:4e:2b:f4|epl          |auto
+|access-1-1-1-5 |unassigned |outage           |84:c8:07:4e:2b:f5|epl          |auto-1000-full
+|access-1-1-1-6 |unassigned |outage           |84:c8:07:4e:2b:f6|epl          |auto-1000-full
+|access-1-1-1-7 |in-service |normal           |84:c8:07:4e:2b:f7|evpl         |fixed-10g-full
+|access-1-1-1-8 |unassigned |outage           |84:c8:07:4e:2b:f8|epl          |fixed-10g-full
+AD-FSP150XG108-C-1-LDP00-GB-NE-1:ntexg108-1-1-1-->

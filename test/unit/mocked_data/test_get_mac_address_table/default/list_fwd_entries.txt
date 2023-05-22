@@ -1,0 +1,5 @@
+AD-FSP150XG108-C-1-LDP00-GB-NE-1:flow-1-1-1-7-1--> list fwd-entries
+|MAC Address       |Action     |Port           |Type      |Status    |Remaining Age (Sec)
+|------------------|-----------|---------------|----------|----------|--------------------|
+|bc:d7:a5:cf:30:40 |forward    |network-1-1-1-1|dynamic   |Valid     |96
+|00:00:5e:00:01:0a |forward    |access-1-1-1-7 |dynamic   |Valid     |299

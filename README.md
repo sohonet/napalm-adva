@@ -13,3 +13,4 @@ Napalm Driver for Adva CPEs
 
 ## Supported Devices
 * Adva FSP 150-GE104
+* Adva FSP 150-XG108

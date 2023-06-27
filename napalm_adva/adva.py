@@ -117,6 +117,10 @@ class AdvaDriver(NetworkDriver):
 
         if speed == "negotiating" or speed == "none":
             return -1.0
+        elif "10g" in speed:
+            return 10000
+        elif "25g" in speed:
+            return 25000
         else:
             return float(speed.split("-")[1])
 

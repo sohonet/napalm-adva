@@ -65,7 +65,7 @@ class AdvaDriver(NetworkDriver):
                 verbose=False,
             )
             self.device.session_preparation()
-            self.device.send_command("", expect_string=f"{self.hostname.split('.')[0]}-->")
+            self.device.send_command("", expect_string=r"-->")
 
         except Exception:
             raise ConnectionException("Cannot connect to switch: %s:%s" % (self.hostname, self.port))
@@ -85,9 +85,9 @@ class AdvaDriver(NetworkDriver):
         show_system = self.device.send_command("show system")
         system_info = textfsm_extractor(self, "show_system", show_system)[0]
 
-        self.device.send_command("network-element ne-1", expect_string=f"{self.hostname.split('.')[0]}-NE-1-->")
+        self.device.send_command("network-element ne-1", expect_string=r"NE-1-->")
         show_shelf_info = self.device.send_command("show shelf-info")
-        self.device.send_command("home", expect_string=f"{self.hostname.split('.')[0]}-->")
+        self.device.send_command("home", expect_string=r"-->")
         serial_number = textfsm_extractor(self, "show_shelf_info", show_shelf_info)[0]
 
         show_ports = self.device.send_command_timing("show ports")
@@ -243,9 +243,9 @@ class AdvaDriver(NetworkDriver):
     def get_mac_address_table(self):
 
         self.device.send_command("network-element ne-1",
-                                 expect_string=f"{self.hostname.split('.')[0]}-NE-1-->")
+                                 expect_string=r"NE-1-->")
         self.device.send_command("configure nte nte",
-                                 expect_string=fr"{self.hostname.split('.')[0]}-NE-1:nte(.*)-1-1-1-->")
+                                 expect_string=r"NE-1:nte(.*)-1-1-1-->")
 
         show_ports = self.device.send_command("show ports")
         access_ports = textfsm_extractor(self, "show_ports_up_access", show_ports)
@@ -253,17 +253,17 @@ class AdvaDriver(NetworkDriver):
         mac_address_table = []
         for p in access_ports:
             self.device.send_command(f"configure access-port {p['port']}",
-                                     expect_string=f"{self.hostname.split('.')[0]}-NE-1:{p['port']}")
+                                     expect_string=fr"-NE-1:{p['port']}")
             show_flows = self.device.send_command("list flows")
             flows = textfsm_extractor(self, "show_port_flows", show_flows)
 
             for flow in flows:
                 self.device.send_command(f"configure flow {flow['flow']}",
-                                         expect_string=f"{self.hostname.split('.')[0]}-NE-1:{flow['flow']}")
+                                         expect_string=fr"NE-1:{flow['flow']}")
                 list_fwd = self.device.send_command("list fwd-entries")
                 macs = textfsm_extractor(self, "list_fwd_entries", list_fwd)
                 self.device.send_command("back",
-                                         expect_string=f"{self.hostname.split('.')[0]}-NE-1:{p['port']}")
+                                         expect_string=fr"NE-1:{p['port']}")
 
                 for mac in macs:
                     mac_address_table.append({
@@ -276,6 +276,6 @@ class AdvaDriver(NetworkDriver):
                         "last_move": -1.0
                     })
 
-            self.device.send_command("back", expect_string=fr"{self.hostname.split('.')[0]}-NE-1:nte(.*)-1-1-1-->")
+            self.device.send_command("back", expect_string=fr"NE-1:nte(.*)-1-1-1-->")
 
         return mac_address_table

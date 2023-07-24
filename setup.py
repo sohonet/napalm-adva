@@ -11,7 +11,7 @@ with open("requirements.txt", "r") as fs:
 
 setup(
     name="napalm-adva",
-    version="0.1.0",
+    version="0.1.1",
     packages=find_packages(),
     author="Johan van den Dorpe",
     author_email="johan@vdltech.net",

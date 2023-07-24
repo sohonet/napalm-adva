@@ -41,7 +41,10 @@ class AdvaDriver(NetworkDriver):
         self.hostname = hostname
         self.username = username
         self.password = password
-        self.timeout = timeout
+        if timeout:
+            self.timeout = timeout
+        else:
+            self.timeout = 60
         self.port = 22
 
         if optional_args is None:

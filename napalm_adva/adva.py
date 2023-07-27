@@ -31,7 +31,6 @@ from napalm.base.exceptions import (
 from netmiko import ConnectHandler
 import ipaddress
 
-
 class AdvaDriver(NetworkDriver):
     """Napalm driver for Adva."""
 
@@ -185,6 +184,7 @@ class AdvaDriver(NetworkDriver):
                 "tagged-native-vlan": False,
             }
 
+        # get customer vlans
         show_flows = self.device.send_command("show running-config delta partition flow")
         flows = textfsm_extractor(self, "show_run_flow", show_flows)
         for flow in flows:
@@ -194,13 +194,22 @@ class AdvaDriver(NetworkDriver):
                 result[flow_data["accessinterface"]]["access-vlan"] = flow_data["vlan"]
                 result[flow_data["networkinterface"]]["trunk-vlans"].append(flow_data["vlan"])
 
+        # get management vlans
+        show_mgmt_tnl = self.device.send_command("show running-config delta partition mgmttnl")
+        mgmt_flows = textfsm_extractor(self, "show_run_mgmttnl", show_mgmt_tnl)
+        if mgmt_flows:
+            for mgmt_flow in mgmt_flows:
+                result[mgmt_flow["port"]]["trunk-vlans"].append(mgmt_flow["vlan"])
+
         return result
 
     def get_vlans(self):
 
+        result = {}
+
+        # get customer flow vlans
         show_flows = self.device.send_command("show running-config delta partition flow")
         flows = textfsm_extractor(self, "show_run_flow", show_flows)
-        result = {}
         for flow in flows:
             show_flow = self.device.send_command(f"show flow {flow['flowname']}")
             flow_data = textfsm_extractor(self, "show_flow", show_flow)[0]
@@ -208,6 +217,16 @@ class AdvaDriver(NetworkDriver):
                 result[flow_data["vlan"]] = {
                     "name": flow_data["circuitname"],
                     "interfaces": [flow_data["networkinterface"], flow_data["accessinterface"]]
+                }
+
+        # get management flow vlans
+        show_mgmt_tnl = self.device.send_command("show running-config delta partition mgmttnl")
+        mgmt_flows = textfsm_extractor(self, "show_run_mgmttnl", show_mgmt_tnl)
+        if mgmt_flows:
+            for mgmt_flow in mgmt_flows:
+                result[mgmt_flow["vlan"]] = {
+                    "name": mgmt_flow["circuitname"],
+                    "interfaces": [mgmt_flow["port"]]
                 }
 
         return result

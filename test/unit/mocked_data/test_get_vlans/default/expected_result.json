@@ -6,5 +6,9 @@
   "2222": {
       "name": "GE104RFCTEST",
       "interfaces": ["network-1-1-1-1", "access-1-1-1-4"]
+  },
+  "433": {
+      "name": "DCN",
+      "interfaces": ["network-1-1-1-1"]
   }
 }

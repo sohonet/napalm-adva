@@ -1,0 +1,22 @@
+Preparing configuration file...
+
+#
+#CLI:MANAGEMENT TUNNEL-1  Delete
+#
+home
+configure communication
+  delete mgmttnl mgmt_tnl-1
+
+#
+#CLI:MANAGEMENT TUNNEL-1  Create
+#
+home
+configure communication
+  add mgmttunnel 1 "DCN" network-1-1-1-1 ethernet vlan-based ipv4-only enabled 433 disabled 64000 768000 disabled 10.32.31.194 255.255.255.0
+  configure mgmttnl mgmt_tnl-1
+    dhcp-client-id-control disabled
+    dhcp-class-id-control disabled
+
+#end
+home
+admin config-file

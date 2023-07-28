@@ -19,6 +19,16 @@ Napalm driver for Adva.
 Read https://napalm.readthedocs.io for more information.
 """
 
+import tempfile
+import ipaddress
+import difflib
+from threading import Thread
+import socket
+import time
+import io
+import re
+import logging
+
 from napalm.base import NetworkDriver
 from napalm.base.helpers import textfsm_extractor
 from napalm.base.exceptions import (
@@ -28,8 +38,12 @@ from napalm.base.exceptions import (
     ReplaceConfigException,
     CommandErrorException,
 )
+
 from netmiko import ConnectHandler
-import ipaddress
+import tftpy
+
+logger = logging.getLogger(__name__)
+
 
 class AdvaDriver(NetworkDriver):
     """Napalm driver for Adva."""
@@ -47,6 +61,8 @@ class AdvaDriver(NetworkDriver):
             self.timeout = 60
         if optional_args is None:
             optional_args = {}
+
+        self.merge_candidate = False
 
     def open(self):
         """Implement the NAPALM method open (mandatory)"""
@@ -334,3 +350,134 @@ class AdvaDriver(NetworkDriver):
             self.send_command("back", expect_string=rf"NE-1:nte(.*)-1-1-1-->")
 
         return mac_address_table
+
+    def get_config(self, retrieve="all", sanitized=False):
+        """Implementation of get_config for Adva.
+
+        Platform does not support candidate configs, and startup and running configs are identical.
+        It can storefiles which can be loaded as configs, but we ignore that here.
+
+        """
+
+        configs = {
+            "startup": "",
+            "running": "",
+            "candidate": "",
+        }
+
+        if retrieve in ("running", "all"):
+            command = "show running-config current"
+            output = self.send_command(command)
+            configs["running"] = output
+
+        if retrieve in ("startup", "all"):
+            command = "show running-config current"
+            output = self.send_command(command)
+            configs["startup"] = output
+
+        return configs
+
+    def compare_config(self):
+        raise NotImplementedError("Config compare not supported on merge configs")
+
+    def discard_config(self):
+        self.merge_candidate = False
+
+    def load_merge_candidate(self, filename=None, config=None):
+        if filename and config:
+            raise MergeConfigException("Cannot specify both filename and config")
+
+        if filename:
+            with open(filename, "r") as stream:
+                self.merge_candidate = stream.read()
+
+        if config:
+            self.merge_candidate = config
+
+        # Transfer merge candidate with tftp
+        with tempfile.TemporaryDirectory() as temp_dir:
+            # Setup TFTP server
+            tftp_server = tftpy.TftpServer(
+                tftproot=temp_dir,
+                dyn_file_func=self._tftp_handler(self.merge_candidate),
+            )
+            tftp_thread = Thread(target=tftp_server.listen)
+            tftp_thread.daemon = True
+            tftp_thread.start()
+
+            self.send_command(["configure system", "tftp enabled", "home"])
+            result = self.send_command(
+                [
+                    "admin config",
+                    "transfer-file tftp get ip-address "
+                    + self._get_ipaddress()
+                    + " candidate yes",
+                ]
+            )
+            logger.info(result)
+
+            # Server downloads in the background. Sleep to wait for it
+            time.sleep(5)
+
+            tftp_server.stop()
+            tftp_thread.join()
+
+        # Validate merge candidate
+        self._validate_candidate(self.merge_candidate)
+
+    def load_replace_candidate(self, filename=None, config=None):
+        raise NotImplementedError(
+            "config replacement is not supported on Brocade devices"
+        )
+
+    def commit_config(self, message=""):
+        """
+        Send self.merge_candidate to running-config via tftp
+        """
+
+        if not self.merge_candidate:
+            raise MergeConfigException("No candidate loaded")
+
+        self.send_command(["admin config", "load candidate"])
+
+    def _tftp_handler(self, merge_candidate):
+        """tftp handler. return merge candidate no matter what is requested."""
+
+        def _handler(fn, raddress=None, rport=None):
+            if fn == "candidate":
+                return io.StringIO(
+                    "# DO NOT EDIT THIS LINE. FILE_TYPE=CONFIGURATION_FILE VERSION=13.1.1\n"
+                    + merge_candidate
+                )
+
+        return _handler
+
+    def _get_ipaddress(self):
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("1.1.1.1", 1))
+        ip = s.getsockname()[0]
+        s.close()
+        return ip
+
+    def _validate_candidate(self, candidate_config):
+        self.send_command("admin config")
+        configfile_data = self.send_command("show configfile candidate")
+
+        # Strip command output and config file header from output
+        configfile_data = re.sub(
+            "(?s).*?# DO NOT EDIT THIS LINE.*?\n(.*)", "\\1", configfile_data, 1
+        )
+
+        configfile_data_list = [
+            line.strip() for line in configfile_data.splitlines() if line
+        ]
+        candidate_config_list = [
+            line.strip() for line in candidate_config.splitlines() if line
+        ]
+
+        if configfile_data_list != candidate_config_list:
+            diff = difflib.unified_diff(configfile_data_list, candidate_config_list)
+            print("\n".join(diff))
+            raise MergeConfigException(
+                "Candidate config on device not the same as merge candidate"
+            )

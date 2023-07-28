@@ -10,6 +10,10 @@ Napalm Driver for Adva CPEs
 * get_lldp_neighbors
 * get_static_routes
 * get_mac_address_table
+* get_config
+* load_merge_candidate
+* discard_config
+* commit_config
 
 ## Supported Devices
 * Adva FSP 150-GE104

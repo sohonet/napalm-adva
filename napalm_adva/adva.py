@@ -72,20 +72,31 @@ class AdvaDriver(NetworkDriver):
         """Implement the NAPALM method close (mandatory)"""
         self.device.disconnect()
 
+    def send_command(self, command_list, expect_string=r'-->'):
+        ''' Convenience function for self.device.send_command
+            Supports a single command, or a list of commands
+        '''
+        if type(command_list) == str:
+            return self.device.send_command(command_list, expect_string=expect_string)
+
+        command_list.append('home')
+        return self.device.send_multiline(command_list, expect_string=expect_string)
+
+
     def is_alive(self):
         try:
-            self.device.send_command("")
+            self.send_command("")
             return {"is_alive": True}
         except AttributeError:
             return {"is_alive": False}
 
     def get_facts(self):
-        show_system = self.device.send_command("show system")
+        show_system = self.send_command("show system")
         system_info = textfsm_extractor(self, "show_system", show_system)[0]
 
-        self.device.send_command("network-element ne-1", expect_string=r"NE-1-->")
-        show_shelf_info = self.device.send_command("show shelf-info")
-        self.device.send_command("home", expect_string=r"-->")
+        self.send_command("network-element ne-1", expect_string=r"NE-1-->")
+        show_shelf_info = self.send_command("show shelf-info")
+        self.send_command("home", expect_string=r"-->")
         serial_number = textfsm_extractor(self, "show_shelf_info", show_shelf_info)[0]
 
         show_ports = self.device.send_command_timing("show ports")
@@ -126,7 +137,7 @@ class AdvaDriver(NetworkDriver):
             return float(speed.split("-")[1])
 
     def get_interfaces(self):
-        show_ports = self.device.send_command("show ports")
+        show_ports = self.send_command("show ports")
         ports = textfsm_extractor(self, "show_ports", show_ports)
         interface_list = [p['port'] for p in ports]
 
@@ -152,7 +163,7 @@ class AdvaDriver(NetworkDriver):
         return result
 
     def get_interfaces_ip(self):
-        show_run_mgmttnl = self.device.send_command("show running-config delta partition mgmttnl")
+        show_run_mgmttnl = self.send_command("show running-config delta partition mgmttnl")
         info = textfsm_extractor(self, "show_run_mgmttnl", show_run_mgmttnl)
         result = {}
         for i in info:
@@ -164,7 +175,7 @@ class AdvaDriver(NetworkDriver):
         return result
 
     def get_interfaces_vlans(self):
-        show_ports = self.device.send_command("show ports")
+        show_ports = self.send_command("show ports")
         ports = textfsm_extractor(self, "show_ports", show_ports)
         interface_list = [p['port'] for p in ports]
 
@@ -183,18 +194,17 @@ class AdvaDriver(NetworkDriver):
                 "tagged-native-vlan": False,
             }
 
-        # get customer vlans
-        show_flows = self.device.send_command("show running-config delta partition flow")
+        show_flows = self.send_command("show running-config delta partition flow")
         flows = textfsm_extractor(self, "show_run_flow", show_flows)
         for flow in flows:
-            show_flow = self.device.send_command(f"show flow {flow['flowname']}")
+            show_flow = self.send_command(f"show flow {flow['flowname']}")
             flow_data = textfsm_extractor(self, "show_flow", show_flow)[0]
             if flow_data["adminstate"] == "in-service":
                 result[flow_data["accessinterface"]]["access-vlan"] = flow_data["vlan"]
                 result[flow_data["networkinterface"]]["trunk-vlans"].append(flow_data["vlan"])
 
         # get management vlans
-        show_mgmt_tnl = self.device.send_command("show running-config delta partition mgmttnl")
+        show_mgmt_tnl = self.send_command("show running-config delta partition mgmttnl")
         mgmt_flows = textfsm_extractor(self, "show_run_mgmttnl", show_mgmt_tnl)
         if mgmt_flows:
             for mgmt_flow in mgmt_flows:
@@ -207,10 +217,10 @@ class AdvaDriver(NetworkDriver):
         result = {}
 
         # get customer flow vlans
-        show_flows = self.device.send_command("show running-config delta partition flow")
+        show_flows = self.send_command("show running-config delta partition flow")
         flows = textfsm_extractor(self, "show_run_flow", show_flows)
         for flow in flows:
-            show_flow = self.device.send_command(f"show flow {flow['flowname']}")
+            show_flow = self.send_command(f"show flow {flow['flowname']}")
             flow_data = textfsm_extractor(self, "show_flow", show_flow)[0]
             if flow_data["adminstate"] == "in-service":
                 result[flow_data["vlan"]] = {
@@ -219,7 +229,7 @@ class AdvaDriver(NetworkDriver):
                 }
 
         # get management flow vlans
-        show_mgmt_tnl = self.device.send_command("show running-config delta partition mgmttnl")
+        show_mgmt_tnl = self.send_command("show running-config delta partition mgmttnl")
         mgmt_flows = textfsm_extractor(self, "show_run_mgmttnl", show_mgmt_tnl)
         if mgmt_flows:
             for mgmt_flow in mgmt_flows:
@@ -231,7 +241,7 @@ class AdvaDriver(NetworkDriver):
         return result
 
     def get_lldp_neighbors(self):
-        show_lldp_detail = self.device.send_command("show lldp detail")
+        show_lldp_detail = self.send_command("show lldp detail")
         lldp_neighbours = textfsm_extractor(self, "show_lldp_detail", show_lldp_detail)
 
         result = {}
@@ -244,7 +254,7 @@ class AdvaDriver(NetworkDriver):
         return result
 
     def get_static_routes(self):
-        show_ip_routes = self.device.send_command("show ip-routes")
+        show_ip_routes = self.send_command("show ip-routes")
         static_routes = textfsm_extractor(self, "show_ip_routes", show_ip_routes)
 
         result = []
@@ -260,27 +270,27 @@ class AdvaDriver(NetworkDriver):
 
     def get_mac_address_table(self):
 
-        self.device.send_command("network-element ne-1",
+        self.send_command("network-element ne-1",
                                  expect_string=r"NE-1-->")
-        self.device.send_command("configure nte nte",
+        self.send_command("configure nte nte",
                                  expect_string=r"NE-1:nte(.*)-1-1-1-->")
 
-        show_ports = self.device.send_command("show ports")
+        show_ports = self.send_command("show ports")
         access_ports = textfsm_extractor(self, "show_ports_up_access", show_ports)
 
         mac_address_table = []
         for p in access_ports:
-            self.device.send_command(f"configure access-port {p['port']}",
+            self.send_command(f"configure access-port {p['port']}",
                                      expect_string=fr"-NE-1:{p['port']}")
-            show_flows = self.device.send_command("list flows")
+            show_flows = self.send_command("list flows")
             flows = textfsm_extractor(self, "show_port_flows", show_flows)
 
             for flow in flows:
-                self.device.send_command(f"configure flow {flow['flow']}",
+                self.send_command(f"configure flow {flow['flow']}",
                                          expect_string=fr"NE-1:{flow['flow']}")
-                list_fwd = self.device.send_command("list fwd-entries")
+                list_fwd = self.send_command("list fwd-entries")
                 macs = textfsm_extractor(self, "list_fwd_entries", list_fwd)
-                self.device.send_command("back",
+                self.send_command("back",
                                          expect_string=fr"NE-1:{p['port']}")
 
                 for mac in macs:
@@ -294,6 +304,6 @@ class AdvaDriver(NetworkDriver):
                         "last_move": -1.0
                     })
 
-            self.device.send_command("back", expect_string=fr"NE-1:nte(.*)-1-1-1-->")
+            self.send_command("back", expect_string=fr"NE-1:nte(.*)-1-1-1-->")
 
         return mac_address_table

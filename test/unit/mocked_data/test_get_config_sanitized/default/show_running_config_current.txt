@@ -1,0 +1,6 @@
+#
+#CLI:SUBNETWORK  Edit
+#
+home
+configure system
+  prompt "ADVA-PREPROVISIONED"

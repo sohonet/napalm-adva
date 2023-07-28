@@ -1,0 +1,5 @@
+{
+  "candidate": "",
+  "startup": "#\n#CLI:SUBNETWORK  Edit\n#\nhome\nconfigure system\n  prompt \"ADVA-PREPROVISIONED\"\n",
+  "running": "#\n#CLI:SUBNETWORK  Edit\n#\nhome\nconfigure system\n  prompt \"ADVA-PREPROVISIONED\"\n"
+}

@@ -427,7 +427,7 @@ class AdvaDriver(NetworkDriver):
 
     def load_replace_candidate(self, filename=None, config=None):
         raise NotImplementedError(
-            "config replacement is not supported on Brocade devices"
+            "config replacement is not supported on Adva devices without a reboot"
         )
 
     def commit_config(self, message=""):

@@ -66,22 +66,23 @@ class AdvaDriver(NetworkDriver):
             self.device.send_command("", expect_string=r"-->")
 
         except Exception:
-            raise ConnectionException("Cannot connect to switch: %s:%s" % (self.hostname, self.port))
+            raise ConnectionException(
+                "Cannot connect to switch: %s:%s" % (self.hostname, self.port)
+            )
 
     def close(self):
         """Implement the NAPALM method close (mandatory)"""
         self.device.disconnect()
 
-    def send_command(self, command_list, expect_string=r'-->'):
-        ''' Convenience function for self.device.send_command
-            Supports a single command, or a list of commands
-        '''
+    def send_command(self, command_list, expect_string=r"-->"):
+        """Convenience function for self.device.send_command
+        Supports a single command, or a list of commands
+        """
         if type(command_list) == str:
             return self.device.send_command(command_list, expect_string=expect_string)
 
-        command_list.append('home')
+        command_list.append("home")
         return self.device.send_multiline(command_list, expect_string=expect_string)
-
 
     def is_alive(self):
         try:
@@ -101,7 +102,7 @@ class AdvaDriver(NetworkDriver):
 
         show_ports = self.device.send_command_timing("show ports")
         interfaces = textfsm_extractor(self, "show_ports", show_ports)
-        interface_list = [p['port'] for p in interfaces]
+        interface_list = [p["port"] for p in interfaces]
 
         uptime = 0
         if system_info["uptimedays"]:
@@ -115,13 +116,15 @@ class AdvaDriver(NetworkDriver):
 
         return {
             "hostname": system_info["hostname"],
-            "fqdn": system_info["hostname"] if "." in system_info["hostname"] else "false",
+            "fqdn": system_info["hostname"]
+            if "." in system_info["hostname"]
+            else "false",
             "vendor": "Adva",
             "model": system_info["model"],
             "serial_number": serial_number["serial"],
             "interface_list": interface_list,
             "os_version": system_info["version"],
-            "uptime": float(uptime)
+            "uptime": float(uptime),
         }
 
     def _get_port_speed(self, speed):
@@ -139,16 +142,24 @@ class AdvaDriver(NetworkDriver):
     def get_interfaces(self):
         show_ports = self.send_command("show ports")
         ports = textfsm_extractor(self, "show_ports", show_ports)
-        interface_list = [p['port'] for p in ports]
+        interface_list = [p["port"] for p in ports]
 
         result = {}
         for i in interface_list:
             if "network" in i:
-                show_network_port = self.device.send_command_timing(f"show network-port {i}")
-                port_details = textfsm_extractor(self, "show_port_details", show_network_port)[0]
+                show_network_port = self.device.send_command_timing(
+                    f"show network-port {i}"
+                )
+                port_details = textfsm_extractor(
+                    self, "show_port_details", show_network_port
+                )[0]
             else:
-                show_access_port = self.device.send_command_timing(f"show access-port {i}")
-                port_details = textfsm_extractor(self, "show_port_details", show_access_port)[0]
+                show_access_port = self.device.send_command_timing(
+                    f"show access-port {i}"
+                )
+                port_details = textfsm_extractor(
+                    self, "show_port_details", show_access_port
+                )[0]
 
             result[i] = {
                 "description": port_details["alias"],
@@ -157,19 +168,26 @@ class AdvaDriver(NetworkDriver):
                 "mac_address": port_details["macaddress"],
                 "mtu": int(port_details["mtu"]),
                 "speed": self._get_port_speed(port_details["speed"]),
-                "last_flapped": -1.0
+                "last_flapped": -1.0,
             }
 
         return result
 
     def get_interfaces_ip(self):
-        show_run_mgmttnl = self.send_command("show running-config delta partition mgmttnl")
+        show_run_mgmttnl = self.send_command(
+            "show running-config delta partition mgmttnl"
+        )
         info = textfsm_extractor(self, "show_run_mgmttnl", show_run_mgmttnl)
         result = {}
         for i in info:
             result[i["port"]] = {
-                "ipv4": {i["ipaddress"]: {
-                    "prefix_length": ipaddress.IPv4Network(f"{i['ipaddress']}/{i['subnet']}", strict=False).prefixlen}}
+                "ipv4": {
+                    i["ipaddress"]: {
+                        "prefix_length": ipaddress.IPv4Network(
+                            f"{i['ipaddress']}/{i['subnet']}", strict=False
+                        ).prefixlen
+                    }
+                }
             }
 
         return result
@@ -177,7 +195,7 @@ class AdvaDriver(NetworkDriver):
     def get_interfaces_vlans(self):
         show_ports = self.send_command("show ports")
         ports = textfsm_extractor(self, "show_ports", show_ports)
-        interface_list = [p['port'] for p in ports]
+        interface_list = [p["port"] for p in ports]
 
         result = {}
         for i in interface_list:
@@ -201,7 +219,9 @@ class AdvaDriver(NetworkDriver):
             flow_data = textfsm_extractor(self, "show_flow", show_flow)[0]
             if flow_data["adminstate"] == "in-service":
                 result[flow_data["accessinterface"]]["access-vlan"] = flow_data["vlan"]
-                result[flow_data["networkinterface"]]["trunk-vlans"].append(flow_data["vlan"])
+                result[flow_data["networkinterface"]]["trunk-vlans"].append(
+                    flow_data["vlan"]
+                )
 
         # get management vlans
         show_mgmt_tnl = self.send_command("show running-config delta partition mgmttnl")
@@ -213,7 +233,6 @@ class AdvaDriver(NetworkDriver):
         return result
 
     def get_vlans(self):
-
         result = {}
 
         # get customer flow vlans
@@ -225,7 +244,10 @@ class AdvaDriver(NetworkDriver):
             if flow_data["adminstate"] == "in-service":
                 result[flow_data["vlan"]] = {
                     "name": flow_data["circuitname"],
-                    "interfaces": [flow_data["networkinterface"], flow_data["accessinterface"]]
+                    "interfaces": [
+                        flow_data["networkinterface"],
+                        flow_data["accessinterface"],
+                    ],
                 }
 
         # get management flow vlans
@@ -235,7 +257,7 @@ class AdvaDriver(NetworkDriver):
             for mgmt_flow in mgmt_flows:
                 result[mgmt_flow["vlan"]] = {
                     "name": mgmt_flow["circuitname"],
-                    "interfaces": [mgmt_flow["port"]]
+                    "interfaces": [mgmt_flow["port"]],
                 }
 
         return result
@@ -246,10 +268,9 @@ class AdvaDriver(NetworkDriver):
 
         result = {}
         for i in lldp_neighbours:
-            result[i["localport"]] = [{
-                "hostname": i["remotehostname"],
-                "port": i["remoteport"]
-            }]
+            result[i["localport"]] = [
+                {"hostname": i["remotehostname"], "port": i["remoteport"]}
+            ]
 
         return result
 
@@ -259,51 +280,57 @@ class AdvaDriver(NetworkDriver):
 
         result = []
         for i in static_routes:
-            result.append({
-                "prefix": ipaddress.IPv4Network(f"{i['prefix']}/{i['subnet']}").with_prefixlen,
-                "nexthop": i["nexthop"],
-                "name": None,
-                "vrf": None
-            })
+            result.append(
+                {
+                    "prefix": ipaddress.IPv4Network(
+                        f"{i['prefix']}/{i['subnet']}"
+                    ).with_prefixlen,
+                    "nexthop": i["nexthop"],
+                    "name": None,
+                    "vrf": None,
+                }
+            )
 
         return result
 
     def get_mac_address_table(self):
-
-        self.send_command("network-element ne-1",
-                                 expect_string=r"NE-1-->")
-        self.send_command("configure nte nte",
-                                 expect_string=r"NE-1:nte(.*)-1-1-1-->")
+        self.send_command("network-element ne-1", expect_string=r"NE-1-->")
+        self.send_command("configure nte nte", expect_string=r"NE-1:nte(.*)-1-1-1-->")
 
         show_ports = self.send_command("show ports")
         access_ports = textfsm_extractor(self, "show_ports_up_access", show_ports)
 
         mac_address_table = []
         for p in access_ports:
-            self.send_command(f"configure access-port {p['port']}",
-                                     expect_string=fr"-NE-1:{p['port']}")
+            self.send_command(
+                f"configure access-port {p['port']}",
+                expect_string=rf"-NE-1:{p['port']}",
+            )
             show_flows = self.send_command("list flows")
             flows = textfsm_extractor(self, "show_port_flows", show_flows)
 
             for flow in flows:
-                self.send_command(f"configure flow {flow['flow']}",
-                                         expect_string=fr"NE-1:{flow['flow']}")
+                self.send_command(
+                    f"configure flow {flow['flow']}",
+                    expect_string=rf"NE-1:{flow['flow']}",
+                )
                 list_fwd = self.send_command("list fwd-entries")
                 macs = textfsm_extractor(self, "list_fwd_entries", list_fwd)
-                self.send_command("back",
-                                         expect_string=fr"NE-1:{p['port']}")
+                self.send_command("back", expect_string=rf"NE-1:{p['port']}")
 
                 for mac in macs:
-                    mac_address_table.append({
-                        "mac": mac["mac"],
-                        "interface": mac["port"],
-                        "vlan": -1,
-                        "static": bool(mac["type"] == "static"),
-                        "active": bool(mac["status"] == "Valid"),
-                        "moves": -1,
-                        "last_move": -1.0
-                    })
+                    mac_address_table.append(
+                        {
+                            "mac": mac["mac"],
+                            "interface": mac["port"],
+                            "vlan": -1,
+                            "static": bool(mac["type"] == "static"),
+                            "active": bool(mac["status"] == "Valid"),
+                            "moves": -1,
+                            "last_move": -1.0,
+                        }
+                    )
 
-            self.send_command("back", expect_string=fr"NE-1:nte(.*)-1-1-1-->")
+            self.send_command("back", expect_string=rf"NE-1:nte(.*)-1-1-1-->")
 
         return mac_address_table

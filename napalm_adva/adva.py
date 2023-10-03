@@ -366,12 +366,12 @@ class AdvaDriver(NetworkDriver):
         }
 
         if retrieve in ("running", "all"):
-            command = "show running-config current"
+            command = "show running-config delta"
             output = self.send_command(command)
             configs["running"] = output
 
         if retrieve in ("startup", "all"):
-            command = "show running-config current"
+            command = "show running-config delta"
             output = self.send_command(command)
             configs["startup"] = output
 

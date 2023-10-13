@@ -43,7 +43,7 @@ from netmiko import ConnectHandler
 import tftpy
 
 logger = logging.getLogger(__name__)
-
+logging.getLogger("tftpy.TftpServer").setLevel(logging.ERROR)
 
 class AdvaDriver(NetworkDriver):
     """Napalm driver for Adva."""
@@ -63,6 +63,7 @@ class AdvaDriver(NetworkDriver):
             optional_args = {}
 
         self.merge_candidate = False
+        self.replace_candidate = False
 
     def open(self):
         """Implement the NAPALM method open (mandatory)"""
@@ -382,6 +383,7 @@ class AdvaDriver(NetworkDriver):
 
     def discard_config(self):
         self.merge_candidate = False
+        self.replace_candidate = False
 
     def load_merge_candidate(self, filename=None, config=None):
         if filename and config:
@@ -392,14 +394,70 @@ class AdvaDriver(NetworkDriver):
                 self.merge_candidate = stream.read()
 
         if config:
-            self.merge_candidate = config
+            self.merge_candidate = self._clean_config(config)
 
+        # Ensure config ends in newline
+        if not self.merge_candidate.endswith("\n"):
+            self.merge_candidate += "\n"
+
+        # Transfer merge candidate
+        self._transfer_file(self.merge_candidate)
+
+        # Validate merge candidate
+        self._validate_candidate(self.merge_candidate)
+
+    def load_replace_candidate(self, filename=None, config=None):
+        if filename and config:
+            raise ReplaceConfigException("Cannot specify both filename and config")
+
+        if filename:
+            with open(filename, "r") as stream:
+                self.replace_candidate = stream.read()
+
+        if config:
+            self.replace_candidate = self._clean_config(config)
+
+        # Ensure config ends in newline
+        if not self.replace_candidate.endswith("\n"):
+            self.replace_candidate += "\n"
+
+        # Transfer replace candidate
+        self._transfer_file(self.replace_candidate)
+
+        # Validate merge candidate
+        self._validate_candidate(self.replace_candidate)
+
+    def commit_config(self, message=""):
+        """
+        Send self.merge_candidate to running-config via tftp
+        """
+
+        if self.merge_candidate and self.replace_candidate:
+            raise MergeConfigException("Both merge and replace candidate found")
+
+        if not self.merge_candidate and not self.replace_candidate:
+            raise MergeConfigException("No candidate loaded")
+
+        if self.merge_candidate:
+            result = self.send_command(["admin config", "load candidate", "home"])
+            if 'ConfigFile load failed' in result:
+                show_configfile_status = self.send_command("show configfile-status")
+                configfile_status = textfsm_extractor(self, "show_configfile_status", show_configfile_status)
+                raise MergeConfigException(configfile_status[0]['error'])
+        elif self.replace_candidate:
+            self.send_command(["admin config", "restart-with-configfile candidate yes"])
+
+    def _clean_config(self, content):
+        '''In banner \\n strings need to be escaped for python '''
+        return content.replace('\\n','\\\\n')
+
+    def _transfer_file(self, filecontent, destfile='candidate'):
         # Transfer merge candidate with tftp
         with tempfile.TemporaryDirectory() as temp_dir:
             # Setup TFTP server
             tftp_server = tftpy.TftpServer(
                 tftproot=temp_dir,
-                dyn_file_func=self._tftp_handler(self.merge_candidate),
+                dyn_file_func=self._tftp_handler(filecontent),
             )
             tftp_thread = Thread(target=tftp_server.listen)
             tftp_thread.daemon = True
@@ -409,9 +467,8 @@ class AdvaDriver(NetworkDriver):
             result = self.send_command(
                 [
                     "admin config",
-                    "transfer-file tftp get ip-address "
-                    + self._get_ipaddress()
-                    + " candidate yes",
+                    f"transfer-file tftp get ip-address {self._get_ipaddress()} {destfile} yes",
+                    "home",
                 ]
             )
             logger.info(result)
@@ -421,24 +478,6 @@ class AdvaDriver(NetworkDriver):
 
             tftp_server.stop()
             tftp_thread.join()
-
-        # Validate merge candidate
-        self._validate_candidate(self.merge_candidate)
-
-    def load_replace_candidate(self, filename=None, config=None):
-        raise NotImplementedError(
-            "config replacement is not supported on Adva devices without a reboot"
-        )
-
-    def commit_config(self, message=""):
-        """
-        Send self.merge_candidate to running-config via tftp
-        """
-
-        if not self.merge_candidate:
-            raise MergeConfigException("No candidate loaded")
-
-        self.send_command(["admin config", "load candidate"])
 
     def _tftp_handler(self, merge_candidate):
         """tftp handler. return merge candidate no matter what is requested."""

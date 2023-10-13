@@ -2,7 +2,11 @@
 
 Napalm Driver for Adva CPEs
 
-## Support Functions
+## WARNING ##
+
+When committing a replace_candidate, the device will be rebooted to load the config!
+
+## Supported Functions
 * get_facts
 * get_interfaces
 * get_intefaces_vlans
@@ -12,6 +16,7 @@ Napalm Driver for Adva CPEs
 * get_mac_address_table
 * get_config
 * load_merge_candidate
+* load_replace_candidate
 * discard_config
 * commit_config
 

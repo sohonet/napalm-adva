@@ -396,10 +396,6 @@ class AdvaDriver(NetworkDriver):
         if config:
             self.merge_candidate = self._clean_config(config)
 
-        # Ensure config ends in newline
-        if not self.merge_candidate.endswith("\n"):
-            self.merge_candidate += "\n"
-
         # Transfer merge candidate
         self._transfer_file(self.merge_candidate)
 
@@ -416,10 +412,6 @@ class AdvaDriver(NetworkDriver):
 
         if config:
             self.replace_candidate = self._clean_config(config)
-
-        # Ensure config ends in newline
-        if not self.replace_candidate.endswith("\n"):
-            self.replace_candidate += "\n"
 
         # Transfer replace candidate
         self._transfer_file(self.replace_candidate)
@@ -448,8 +440,16 @@ class AdvaDriver(NetworkDriver):
             self.send_command(["admin config", "restart-with-configfile candidate yes"])
 
     def _clean_config(self, content):
-        '''In banner \\n strings need to be escaped for python '''
-        return content.replace('\\n','\\\\n')
+        ''' Ensure config content is in the correct format:
+
+        - In banner \\n strings need to be escaped for python
+        - Config must end with a newline
+        '''
+
+        content = content.replace('\\n','\\\\n')
+        if not content.endswith("\n"):
+            content += "\n"
+        return content
 
     def _transfer_file(self, filecontent, destfile='candidate'):
         # Transfer merge candidate with tftp

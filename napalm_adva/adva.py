@@ -500,6 +500,13 @@ class AdvaDriver(NetworkDriver):
 
     def _validate_candidate(self, candidate_config):
         self.send_command("admin config")
+
+        list_configfile = self.send_command("list")
+        if 'candidate' not in list_configfile:
+            raise MergeConfigException(
+                "Candidate config not transferred to device"
+            )
+
         configfile_data = self.send_command("show configfile candidate")
 
         # Strip command output and config file header from output

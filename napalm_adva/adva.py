@@ -61,6 +61,7 @@ class AdvaDriver(NetworkDriver):
             self.timeout = 60
         if optional_args is None:
             optional_args = {}
+        self.optional_args = optional_args
 
         self.merge_candidate = False
         self.replace_candidate = False
@@ -68,17 +69,20 @@ class AdvaDriver(NetworkDriver):
     def open(self):
         """Implement the NAPALM method open (mandatory)"""
 
+        device = {
+            'device_type':"generic",
+            'ip':self.hostname,
+            'port':self.port,
+            'username':self.username,
+            'password':self.password,
+            'timeout':self.timeout,
+            'conn_timeout':self.timeout,
+            'verbose':False,
+        }
+        device.update(self.optional_args)
+
         try:
-            self.device = ConnectHandler(
-                device_type="generic",
-                ip=self.hostname,  # saves device parameters
-                port=self.port,
-                username=self.username,
-                password=self.password,
-                timeout=self.timeout,
-                conn_timeout=self.timeout,
-                verbose=False,
-            )
+            self.device = ConnectHandler(**device)
             self.device.session_preparation()
             self.device.send_command("", expect_string=r"-->")
 

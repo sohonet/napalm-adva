@@ -77,6 +77,7 @@ class AdvaDriver(NetworkDriver):
             'password':self.password,
             'timeout':self.timeout,
             'conn_timeout':self.timeout,
+            'auth_timeout':self.timeout,
             'verbose':False,
         }
         device.update(self.optional_args)
